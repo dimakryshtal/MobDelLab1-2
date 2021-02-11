@@ -183,35 +183,76 @@ class TimeDK {
         self.second = UInt(Calendar.current.component(.second, from: date))
     }
     
+    func get24Time() -> String {
+        return (hour < 10 ? "0" : "") + String(hour) + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second)
+    }
+}
+extension TimeDK {
     func getTime() -> String {
         var result = ""
         if(hour >= 12) {
-            result += String(hour == 12 ? 12 : (hour - 12)) + ":" + String(minute) + ":" + String(second) + " PM"
+            let stringH = String(hour == 12 ? 12 : (hour - 12))
+            result += (stringH.count == 1 ? "0" : "") + stringH + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second) + " PM"
         } else {
-            result += String(hour) + ":" + String(minute) + ":" + String(second) + " AM"
+            result += (hour < 10 ? "0" : "") + String(hour) + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second) + " AM"
         }
         return result
     }
     func getTimeSum(secondObject: TimeDK) -> TimeDK {
         var secondsSum = self.second + secondObject.second
         var minutesSum = (secondsSum >= 60 ? 1 : 0) + self.minute + secondObject.minute
-        var hoursSum = ((minutesSum >= 60 ? 1 : 0) + self.hour + secondObject.hour) % 24
+        let hoursSum = ((minutesSum >= 60 ? 1 : 0) + self.hour + secondObject.hour) % 24
         minutesSum = minutesSum % 60
         secondsSum = secondsSum % 60
-        print(hoursSum)
-        print(minutesSum)
-        print(secondsSum)
         
-        var res = TimeDK(h: hoursSum, m: minutesSum, s: secondsSum)
+        let res = TimeDK(h: hoursSum, m: minutesSum, s: secondsSum)
+        return res!
+    }
+    
+    func getTimeDifference(secondObject: TimeDK) -> TimeDK {
+        var secondsDiff = Int(self.second) - Int(secondObject.second)
+        var minutesDiff = Int(self.minute) - Int(secondObject.minute) - (secondsDiff < 0 ? 1 : 0)
+        var hoursDiff = Int(self.hour) - Int(secondObject.hour) - (minutesDiff < 0 ? 1 : 0)
+        secondsDiff = (secondsDiff < 0 ? (60 + secondsDiff) : secondsDiff)
+        minutesDiff = (minutesDiff < 0 ? (60 + minutesDiff) : minutesDiff)
+        hoursDiff = (hoursDiff < 0 ? (24 + hoursDiff) : hoursDiff)
+        
+        let res = TimeDK(h: UInt(hoursDiff), m: UInt(minutesDiff), s: UInt(secondsDiff))
         return res!
     }
 }
 
-print("Частина 2")
-var time = TimeDK(h: 23, m: 59, s: 59)
-print(time!.getTime())
-var time2 = TimeDK(h: 12, m: 00, s: 01)
-time?.getTimeSum(secondObject: time2!)
+extension TimeDK {
+    static func getSumFor2(firstObject: TimeDK, secondObject: TimeDK) -> TimeDK {
+        return firstObject.getTimeSum(secondObject: secondObject)
+    }
+    
+    static func getDiffFor2(firstObject: TimeDK, secondObject: TimeDK) -> TimeDK {
+        return firstObject.getTimeDifference(secondObject: secondObject)
+    }
+}
 
+print("\nЧастина 2")
+var time = TimeDK(h: 12, m: 00, s: 04)
+var time2 = TimeDK(h: 12, m: 10, s: 59)
+var time3 = TimeDK(h: 21, m: 11, s: 25)
 
+var time4 = TimeDK(h: 23, m: 59, s: 59)
+var time5 = TimeDK(h: 12, m: 0, s: 1)
+var time6 = TimeDK(h: 0, m: 0, s: 1)
+    
+var timeWithNoArgs = TimeDK()
+var timeWithDate = TimeDK(date: Date())
 
+print("Task 6")
+print(time3!.getTime())
+print(time!.getTimeSum(secondObject: timeWithNoArgs).get24Time())
+print(time2!.getTimeDifference(secondObject: time3!).get24Time())
+
+print("Task 7")
+print(TimeDK.getSumFor2(firstObject: time!, secondObject: time2!).getTime())
+print(TimeDK.getDiffFor2(firstObject: timeWithDate, secondObject: time2!).getTime())
+
+print("Task 10")
+print(time4!.getTimeSum(secondObject: time5!).get24Time())
+print(timeWithNoArgs.getTimeDifference(secondObject: time6!).get24Time())
