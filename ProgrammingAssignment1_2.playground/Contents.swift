@@ -184,19 +184,17 @@ class TimeDK {
     }
     
     func get24Time() -> String {
-        return (hour < 10 ? "0" : "") + String(hour) + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second)
+        return "\(hour < 10 ? "0" : "")\(hour):\(minute < 10 ? "0" : "")\(minute):\(second < 10 ? "0" : "")\(second)"
     }
 }
 extension TimeDK {
     func getTime() -> String {
-        var result = ""
         if(hour >= 12) {
             let stringH = String(hour == 12 ? 12 : (hour - 12))
-            result += (stringH.count == 1 ? "0" : "") + stringH + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second) + " PM"
+            return "\(stringH.count == 1 ? "0" : "")\(stringH):\(minute < 10 ? "0" : "")\(minute):\(second < 10 ? "0" : "")\(second) PM"
         } else {
-            result += (hour < 10 ? "0" : "") + String(hour) + ":" + (minute < 10 ? "0" : "") + String(minute) + ":" + (second < 10 ? "0" : "") + String(second) + " AM"
+            return "\(hour < 10 ? "0" : "")\(hour):\(minute < 10 ? "0" : "")\(minute):\(second < 10 ? "0" : "")\(second) AM"
         }
-        return result
     }
     func getTimeSum(secondObject: TimeDK) -> TimeDK {
         var secondsSum = self.second + secondObject.second
